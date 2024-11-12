@@ -176,7 +176,151 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
 
         # BEGIN_YOUR_CODE (our solution is 22 lines of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+        #raise Exception("Not implemented yet")
+        #print("the number of agents is: " , gameState.getNumAgents())
+        # depth = self.depth
+        # numghosts = gameState.getNumAgents()
+        # for i in range(0,depth):
+        #   maxVal = float('-inf')
+        #   actions = gameState.getLegalActions(0)
+        #   index_next_state = 0
+        #   for the_action_index in range(len(actions)):
+        #     if maxVal < self.evaluationFunction(gameState):
+        #        maxVal = self.evaluationFunction(gameState)
+        #        index_next_state = the_action_index
+
+        #     #maxVal = max(self.evaluationFunction(actions[the_action_index]) , maxVal)
+        #   the_next_state = gameState.generatePacmanSuccessor(action=actions[index_next_state])
+
+        #   for j in range(1,numghosts):
+        #     actions = the_next_state.getLegalActions(j)
+        #     minVal = float('inf')
+        #     index_next_state = 0
+        #     for the_action_index in range(len(actions)):
+        #       if minVal > self.evaluationFunction(the_next_state):
+        #         minVal = self.evaluationFunction(the_next_state)
+        #         index_next_state = the_action_index
+              
+        
+
+        def OptPac(state,depth):
+            max_val = float('-inf')
+            if (state.isWin() or state.isLose()):
+                return state.getScore()
+            actions = state.getLegalActions(0)
+            theOptAction = Directions.STOP
+            for actionindex,action in enumerate(actions):
+                the_val = OptGhost(state.generateSuccessor(0,action),depth,1)
+                if (the_val > max_val):
+                    max_val = the_val
+                    theOptAction = action
+            if self.depth == depth:
+                return theOptAction
+            else:
+                return max_val
+
+                
+                  
+
+        def OptGhost(state,depth,GhostIndex):
+            min_val = float('inf')
+
+            if (state.isWin() or state.isLose()):
+                return state.getScore()
+            theOptAction = Directions.STOP
+            #print("the shost indesex : " , GhostIndex)
+            actions = state.getLegalActions(GhostIndex)
+            if GhostIndex + 1 >= gameState.getNumAgents():
+                if depth >= 1:
+                    return self.evaluationFunction(state)
+                for action in actions:
+                  
+                  the_val = OptPac(state.generateSuccessor(GhostIndex,action),depth-1)
+                  if (the_val < min_val):
+                      min_val = the_val
+                      theOptAction = action
+            else:
+                for action in actions:
+                  the_val = OptGhost(state.generateSuccessor(GhostIndex,action),depth,GhostIndex+1)
+                  if (the_val < min_val):
+                      min_val = the_val
+                      theOptAction = action
+            #print("the value:" , the_val)
+            return the_val
+                
+            
+        return OptPac(gameState,self.depth)
+
+        ################# #this is the old code but will modify i t
+        #here we should use the mod operation to get the agentindex
+        #global agentIndex
+        # agentIndex = 0
+        # #agentIndex = agentIndex % (gameState.getNumAgents() + 1)
+        # #max_val = float('-inf')
+        # #min_val = float('inf')
+        # numGhosts = GameState.getNumAgents(gameState)
+        # def V(state,depth):
+        #   max_val = float('-inf')
+        #   min_val = float('inf')
+
+        #   if depth == 0 or state.isWin() or state.isLose():
+        #       return self.evaluationFunction(state) , ""
+          
+        #   agentIndex = agentIndex % (gameState.getNumAgents() + 1)
+        #   agentIndex = agentIndex + 1
+        #   currentAgent = agentIndex -1
+        #   if currentAgent == 0:
+        #       actions = state.getLegalActions(currentAgent)
+        #       action_index = 0
+        #       action_taken = None
+              
+        #       for action in range(len(actions)):
+        #         val , action_taken_temp = V(state.generateSuccessor(currentAgent,actions[action]) , depth-1)
+        #         if (max_val < val):
+        #             action_index = action
+        #             action_taken = action_taken_temp
+        #             max_val = val
+                                       
+        #         #max_val = max(max_val, , depth))
+                
+        #       return max_val , action_taken
+        #   elif currentAgent == numGhosts - 1:
+        #       actions = state.getLegalActions(currentAgent)
+        #       for action in actions:
+        #         #min_val = min(min_val,V(state.generateSuccessor(currentAgent,action) , depth-1))
+        #         val, action_taken_temp = V(state.generateSuccessor(currentAgent,action),depth-1)
+        #         if (min_val > val):
+        #             action_taken = action_taken_temp
+        #             min_val = val
+        #       return min_val , action_taken
+        #   else:
+        #       actions = state.getLegalActions(currentAgent)
+        #       for action in actions:
+        #         min_val = min(min_val,V(state.generateSuccessor(currentAgent,action) , depth))
+        #       return min_val
+
+        # V(gameState,self.depth)
+        #################### end of the cold code
+              
+          
+          # agentIndex = agentIndex % (gameState.getNumAgents() + 1)
+          # agentIndex = agentIndex + 1
+          # if depth != 0:
+          #     #return gameState.getScore(state)
+          #     actions = state.getLegalActions(agentIndex)
+          #     for action in actions:
+          #       V(state.generateSuccessor(agentIndex,action) , depth)
+          #       max()
+          # else:
+              
+                  
+          #     if agentIndex == 0:
+          #         return max(state.getScore(state),max_val)
+          #     else:
+          #         return min(state.getScore(state),min_val)
+          #     return 
+              
+          # return 
         # END_YOUR_CODE
 
 ######################################################################################
