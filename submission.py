@@ -231,7 +231,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             #print("the shost indesex : " , GhostIndex)
             actions = state.getLegalActions(GhostIndex)
             if GhostIndex + 1 >= gameState.getNumAgents():
-                if depth >= 1:
+                if depth <= 1:
                     return self.evaluationFunction(state)
                 for action in actions:
                   
@@ -340,7 +340,79 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
 
         # BEGIN_YOUR_CODE (our solution is 43 lines of code, but don't worry if you deviate from this)
-        raise Exception("Not implemented yet")
+        #raise Exception("Not implemented yet")
+        def AlphaBetaPrune(state,depth,alpha,beta,playerIndex):
+            print("here i am at the start of the function")
+            if state.isWin() or state.isLose():
+              return state.getScore()
+            theoptmove = Directions.STOP
+            if playerIndex == 0:
+                value = float('-inf')
+                actions = state.getLegalActions(0)
+                for action in actions:
+                  newval = AlphaBetaPrune(state.generateSuccessor(0,action), depth,alpha ,beta , 1)
+                  if value < newval:
+                      value = newval
+                      theoptmove = action
+                  if value > beta:
+                      print('prunnig happened')
+                      break
+                  alpha = max(alpha , value)
+            else:
+                value = float('inf')
+                actions = state.getLegalActions(playerIndex)
+                for action in actions:
+                  if playerIndex + 1 >= gameState.getNumAgents():
+                    if depth <= 1:
+                      return self.evaluationFunction(state)
+                    newval = AlphaBetaPrune(state.generateSuccessor(playerIndex,action), depth-1,alpha ,beta , 0)
+                  else:
+                      newval = AlphaBetaPrune(state.generateSuccessor(playerIndex,action), depth,alpha ,beta , playerIndex+1)
+                      
+                  if value > newval:
+                      value = newval
+                      theoptmove = action
+                  if value < alpha:
+                      print('prunnig happened')
+                      break 
+                  beta = min(alpha , value)
+            if depth == self.depth and playerIndex == 0:
+                return theoptmove
+            else:
+                print(value)
+                return value
+                
+                 
+        return AlphaBetaPrune(gameState,self.depth,float('-inf') , float('inf') , 0)
+                    
+
+
+
+
+
+        # def AlphaBetaPruneMax(state,depth,alpha,beta):
+        #     max_val = float('-inf')
+        #     if (state.isWin() or state.isLose()):
+        #       return state.getScore()
+        #     if(alpha > beta):
+        #         return float('inf')
+            
+        #     actions = state.getLegalActions(0)
+        #     theoptmove = Directions.STOP
+        #     for action in actions:
+        #         nextstate = state.generateSuccessor(0,action)
+        #         AlphaBetaPruneMax(nextstate,depth,alpha,beta)
+        #         if ():
+        #             alpha = 
+                
+        #     if depth == self.depth:
+        #       return theoptmove
+        #     else:
+        #         return max_val
+            
+
+
+
         # END_YOUR_CODE
 
 ######################################################################################
