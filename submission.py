@@ -433,7 +433,39 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
      """
 
      # BEGIN_YOUR_CODE (our solution is 20 lines of code, but don't worry if you deviate from this)
-     raise Exception("Not implemented yet")
+     #raise Exception("Not implemented yet")
+     def ExpectMax(state,depth,playerIndex):
+        if state.isWin() or state.isLose():
+            return state.getScore() 
+        
+        if playerIndex == 0:
+            value = float('-inf')
+            theoptmove = Directions.STOP
+            actions = state.getLegalActions(0)
+            for action in actions:
+                temp_value = ExpectMax(state.generateSuccessor(playerIndex,action),depth,1)
+                if temp_value > value:
+                    value = temp_value
+                    theoptmove = action
+        else:
+            value = 0
+            actions = state.getLegalActions(playerIndex)
+            for action in actions:
+                if playerIndex + 1 >= gameState.getNumAgents():
+                    if depth <= 1:
+                      return self.evaluationFunction(state)
+                    value = value + ExpectMax(state.generateSuccessor(playerIndex,action),depth-1,0)
+                else:
+                  value = value + ExpectMax(state.generateSuccessor(playerIndex,action),depth,playerIndex+1)
+            value = value / len(actions)
+        if depth == self.depth and playerIndex == 0:
+              return theoptmove
+        else:
+            print(value)
+            return value
+
+
+     return ExpectMax(gameState,self.depth,0)
      # END_YOUR_CODE
 
 ######################################################################################
