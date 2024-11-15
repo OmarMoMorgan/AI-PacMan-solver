@@ -342,7 +342,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         # BEGIN_YOUR_CODE (our solution is 43 lines of code, but don't worry if you deviate from this)
         #raise Exception("Not implemented yet")
         def AlphaBetaPrune(state,depth,alpha,beta,playerIndex):
-            print("here i am at the start of the function")
+            #print("here i am at the start of the function")
             if state.isWin() or state.isLose():
               return state.getScore()
             theoptmove = Directions.STOP
@@ -355,7 +355,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                       value = newval
                       theoptmove = action
                   if value > beta:
-                      print('prunnig happened')
+                      #print('prunnig happened')
                       break
                   alpha = max(alpha , value)
             else:
@@ -373,13 +373,13 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                       value = newval
                       theoptmove = action
                   if value < alpha:
-                      print('prunnig happened')
+                      #print('prunnig happened')
                       break 
                   beta = min(alpha , value)
             if depth == self.depth and playerIndex == 0:
                 return theoptmove
             else:
-                print(value)
+                #print(value)
                 return value
                 
                  
@@ -461,7 +461,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         if depth == self.depth and playerIndex == 0:
               return theoptmove
         else:
-            print(value)
+            #print(value)
             return value
 
 
@@ -478,7 +478,51 @@ def betterEvaluationFunction(currentGameState: GameState) -> float:
     """
 
     # BEGIN_YOUR_CODE (our solution is 16 lines of code, but don't worry if you deviate from this)
-    raise Exception("Not implemented yet")
+    #raise Exception("Not implemented yet")
+    #successorGameState = currentGameState.generatePacmanSuccessor(action)
+    newPos = currentGameState.getPacmanPosition()
+    oldFood = currentGameState.getFood()
+    newGhostStates = currentGameState.getGhostStates()
+    newScaredTimes = [
+        ghostState.scaredTimer for ghostState in newGhostStates]
+    
+    currentFoodPod = currentGameState.getFood().asList()
+    #print(currentFoodPod)
+    #for x,y in 
+    #if currentFood[x][y] == True:
+    #print('------')
+    sortedfoodManhattan = []
+    for cord in currentFoodPod:
+        sortedfoodManhattan.append(manhattanDistance(cord,currentGameState.getPacmanPosition()))
+    sortedfoodManhattan.sort()
+    curretnremFood = currentGameState.getNumFood()
+    #print(currentGameState.getGhostPositions())
+    #this is the ghost postion but this failed miserably so will ignrore it for now
+    #--------------------------
+    ghostPoss = currentGameState.getGhostPositions()
+    sortedghostManhattan = []
+    for cord in ghostPoss:
+        sortedghostManhattan.append(manhattanDistance(cord,currentGameState.getPacmanPosition()))
+    sortedghostManhattan.sort()
+
+    CapsulePos = currentGameState.getCapsules()
+    sortedCapsulesManhattan = []
+    for cord in CapsulePos:
+        sortedCapsulesManhattan.append(manhattanDistance(cord,currentGameState.getPacmanPosition()))
+    sortedCapsulesManhattan.sort()
+    #---------------------------
+    #print(newScaredTimes)
+    NumCapsulesLeft = len(sortedCapsulesManhattan)
+    if len(sortedCapsulesManhattan) == 0:
+       sortedCapsulesManhattan.append(0)
+    dies = 0
+    if currentGameState.isLose():
+        dies = 1
+    #print(100/sortedCapsulesManhattan[0])
+    #- 1.0*sortedfoodManhattan[0] - 0*sum(sortedfoodManhattan)/len(sortedfoodManhattan)
+    the_new_score = 1*currentGameState.getScore() - 3.0*sortedCapsulesManhattan[0]  + 0.1*sortedghostManhattan[0] - 10*NumCapsulesLeft - 7*curretnremFood
+    #print(the_new_score)
+    return the_new_score
     # END_YOUR_CODE
 
 
